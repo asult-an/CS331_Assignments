@@ -141,11 +141,14 @@ class MM {
         --i;
       }
     }
-    //Look for exact location of match in answer string and remove it.
     if (guess.length() > 0) {
       for (int i = 0; i < guess.length(); ++i) {
         if (compare.contains(guess.charAt(i) + "")) {
           feedback += "W";
+          
+          int j = 0;
+          while (compare.charAt(j) != guess.charAt(i)) {++j;}
+          compare = compare.substring(0, j) + compare.substring(j + 1, compare.length());
           guess = guess.substring(0, i) + guess.substring(i + 1, guess.length());
           --i;
         }
@@ -168,7 +171,7 @@ class MM {
     if (state == PLAY) {
       feedback = getFeedback(query);
       trace.add(query + " " + feedback);
-      if (feedback.equals("BBBB")) { // THIS IS NOT TRUE WHEN IT SHOULD BE.
+      if (feedback.equals("BBBB")) {
         response = youWin + "\n" + playAgain;
         state = GAMEOVER;
         trace.clear();
