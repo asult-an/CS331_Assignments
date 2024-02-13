@@ -49,6 +49,12 @@ public class MMServer {
         }
       }
       close();
+    } catch (SecurityException e) {
+      System.err.println("Connection blocked by system: " + e.getMessage());
+      System.exit(1);
+    } catch (UTFDataFormatException e) {
+      System.err.println("Malformed data: " + e.getMessage());
+      System.exit(1);
     } catch (IOException e) {
       System.out.println("Server encountered an I/O error. Shutting down.");
     }
@@ -77,6 +83,9 @@ public class MMServer {
       }
       if (serverSocket != null) {
         serverSocket.close();
+      }
+      if (clientSocket != null) {
+        clientSocket.close();
       }
 
     } catch (IOException e) {
@@ -168,6 +177,7 @@ class MM {
     String feedback = "";
     String boxBorder = "    =====================\n";
     // client is guessing
+    query = query.toUpperCase();
     if (state == PLAY) {
       feedback = getFeedback(query);
       trace.add(query + " " + feedback);

@@ -58,11 +58,13 @@
      } catch (UnknownHostException e) {
        System.err.println("Unknown host: " + hostName);
        System.exit(1);
+     } catch (UTFDataFormatException e) {
+       System.err.println("Malformed data: " + e.getMessage());
+       System.exit(1);
      } catch (IOException e) {
        System.err.println("I/O error while connecting to " + hostName + " " + e.getMessage());
        System.exit(1);
-     }
- 
+     } 
    }// main method
  
    /*
