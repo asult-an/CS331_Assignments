@@ -185,7 +185,7 @@ class MM {
         state = GAMEOVER;
         trace.clear();
       } else {
-        response += boxBorder + "    Previous guesses:\n";
+        response += "\n" + boxBorder + "    Previous guesses:\n";
         for (int i = 0; i < trace.size(); ++i) {
           response += "    " + trace.get(i) + "\n";
         }
