@@ -27,7 +27,35 @@ public class OOClient
      */
     public static void main(String[] args)
     {
-        /* to be completed */
+        try {
+            socket = new Socket(hostName, portNumber);
+            System.out.println("Connected to server: " + socket);
+            openStreams();
+            String reply = in.readUTF();
+            System.out.println(reply);
+            while(true){
+                reply = in.readUTF();
+                System.out.println(reply);
+                if(reply.equals("Thank you for your visit!")){
+                    break;
+                }
+                if(reply.equals("Invalid option!")){
+                    continue;
+                }
+                String request = console.readLine();
+                out.writeUTF(request);
+            }
+            close();
+          } catch (UnknownHostException e) {
+            System.err.println("Unknown host: " + hostName);
+            System.exit(1);
+          } catch (UTFDataFormatException e) {
+            System.err.println("Malformed data: " + e.getMessage());
+            System.exit(1);
+          } catch (IOException e) {
+            System.err.println("I/O error while connecting to " + hostName + " " + e.getMessage());
+            System.exit(1);
+          } 
         
     }// main method
 
@@ -36,7 +64,9 @@ public class OOClient
      */
     static void openStreams() throws IOException
     {
-        /* to be completed */
+        in = new DataInputStream(socket.getInputStream());
+        out = new DataOutputStream(socket.getOutputStream());
+        console = new BufferedReader(new InputStreamReader(System.in));
         
     }// openStreams method
 
@@ -44,7 +74,21 @@ public class OOClient
      */
     static void close()
     {
-        /* to be completed */
+        try {
+            if (in != null) {
+              in.close();
+            }
+      
+            if (out != null) {
+              out.close();
+            }
+      
+            if (socket != null) {
+              socket.close();
+            }
+          } catch (IOException e) {
+            System.out.println("Server I/O error: " + e.getMessage());
+          }
 
     }// close method
 
