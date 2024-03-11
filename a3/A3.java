@@ -195,7 +195,9 @@ class WebServer implements Runnable
             String type = "Content-Length: " + body.length + "\r\n";
             System.out.println(spaces+status.substring(0,status.length()-4));
             System.out.println(spaces+type);
-            System.out.println(spaces+body);
+            String s = new String(body);
+            System.out.println(spaces + s);
+            System.out.println("");
             out.writeBytes(status);
             out.writeBytes(type);
             out.writeBytes("\r\n");
