@@ -1,6 +1,6 @@
 /** Web server program
  *
- *  @author Mitchell B
+ *  @author Mitchell Bricco, Yeakpan Kopah, Adeel Sultan
  *
  *  @version CS 391 - Fall 2024 - A3
  **/
@@ -8,7 +8,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.nio.file.Files;
 
 public class A3
 {
@@ -93,7 +92,6 @@ class WebServer implements Runnable
         System.out.println(percents + "Connection released: " + clientSocket);
         numConnections--;
         System.out.println(percents + "[# of connected clients: " + numConnections +"]");
-        System.out.println(percents + waiting);
         close();
     }// run method
 
@@ -112,7 +110,7 @@ class WebServer implements Runnable
             String protocol = requestParts[1];
             String pathToFile = requestParts[2].substring(1);
             File file = new File(pathToFile);
-            System.out.println(stars+" response "+stars);
+            System.out.println(stars+" Response "+stars);
             if (file.exists() && file.isFile() && method.equals("GET")) {
                 byte[] fileContents = loadFile(file);
                 write200Response(protocol, fileContents, pathToFile);
@@ -158,6 +156,9 @@ class WebServer implements Runnable
         if(requestLines.isEmpty()){
             return null;
         }
+        else{
+            System.out.println("\n");
+        }
         String[] firstLineParts = requestLines.get(0).split("\\s+");
         String method = firstLineParts[0];
         String pathToFile = firstLineParts[1];
@@ -191,9 +192,9 @@ class WebServer implements Runnable
     void write200Response(String protocol, byte[] body, String pathToFile)
     {
         try {
-            String status = protocol+" 200 OK\r\n";
+            String status = protocol+" 200 Document Follows\r\n";
             String type = "Content-Length: " + body.length + "\r\n";
-            System.out.println(spaces+status.substring(0,status.length()-4));
+            System.out.println(spaces+status.substring(0,status.length()-2));
             System.out.println(spaces+type);
             String s = new String(body);
             System.out.println(spaces + s);
@@ -223,10 +224,10 @@ class WebServer implements Runnable
             String type = "Content-Type: text/html\r\n";
             String responseBody = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>"+
             "Page not found</title></head><body><h1>HTTP Error 404 Not Found</h1>"+
-            "<h2>The file<span style=\"color: red\">"+pathToFile+"</span>"+
+            "<h2>The file<span style=\"color: red\"> /"+pathToFile+" </span>"+
             "does not exist on this server.</h2></html></body>\n";
             out.writeBytes(status);
-            System.out.println(spaces + status.substring(0,status.length()-4));
+            System.out.println(spaces + status.substring(0,status.length()-2));
             out.writeBytes(type);
             System.out.println(spaces + type);
             out.writeBytes("\r\n");
@@ -248,12 +249,13 @@ class WebServer implements Runnable
     void writeCannedResponse(String protocol, int code, String description)
     {
         try {
-            String status = protocol + code + " " + description + "\r\n";
+            String status = protocol + " "+ code + " " + description + "\r\n";
             String type = "Content-Type: text/html\r\n";
             byte[] fileContents = loadFile(new File("html/"+code+".html"));
             System.out.println(spaces + status.substring(0,status.length()-2));
             System.out.println(spaces + type);
-            System.out.println(spaces + fileContents+"\n");
+            String s = new String(fileContents);
+            System.out.println(spaces + s+"\n");
             out.writeBytes(status);
             out.writeBytes(type);
             out.writeBytes("\r\n");
