@@ -1,0 +1,162 @@
+
+%% Server started: ServerSocket[addr=0.0.0.0/0.0.0.0,localport=5555]
+%% Waiting for a client...
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60394,localport=5555]
+%% [# of connected clients: 1]
+%% Waiting for a client...
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60395,localport=5555]
+%% [# of connected clients: 2]
+%% Waiting for a client...
+
+*** request ***
+     GET /html/index.html HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     Upgrade-Insecure-Requests: 1
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+     Accept-Encoding: gzip, deflate, sdch
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** response ***
+     HTTP/1.1 200 Document Follows
+     Content-Length: 183
+
+     <file contents not shown>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60394,localport=5555]
+%% [# of connected clients: 1]
+
+*** request ***
+     GET /images/textbook.png HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Accept: image/webp,image/*,*/*;q=0.8
+     Referer: http://localhost:5555/html/index.html
+     Accept-Encoding: gzip, deflate, sdch
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** response ***
+     HTTP/1.1 200 Document Follows
+     Content-Length: 20412
+
+     <file contents not shown>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60395,localport=5555]
+%% [# of connected clients: 0]
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60396,localport=5555]
+%% [# of connected clients: 1]
+%% Waiting for a client...
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60397,localport=5555]
+%% [# of connected clients: 2]
+%% Waiting for a client...
+
+*** request ***
+     GET /html/made/up/file.html HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     Upgrade-Insecure-Requests: 1
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+     Accept-Encoding: gzip, deflate, sdch
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** response ***
+     HTTP/1.1 404 Not found
+     Content-Type: text/html
+     
+     <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Page not found</title></head><body><h1>HTTP Error 404 Not Found</h1><h2>The file <span style="color: red">/html/made/up/file.html</span> does not exist on this server.</h2></body></html>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60396,localport=5555]
+%% [# of connected clients: 1]
+
+*** request ***
+     GET /coffee HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     Upgrade-Insecure-Requests: 1
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+     Accept-Encoding: gzip, deflate, sdch
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** Response ***
+     HTTP/1.1 418 I'm a teapot
+     Content-Type: text/html
+
+     <contents of html/418.html not shown>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60397,localport=5555]
+%% [# of connected clients: 0]
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60398,localport=5555]
+%% [# of connected clients: 1]
+%% Waiting for a client...
+
+*** request ***
+     GET /tea/coffee HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     Upgrade-Insecure-Requests: 1
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+     Accept-Encoding: gzip, deflate, sdch
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** Response ***
+     HTTP/1.1 503 Coffee is temporarily unavailable
+     Content-Type: text/html
+
+     <contents of html/503.html not shown>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60398,localport=5555]
+%% [# of connected clients: 0]
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60399,localport=5555]
+%% [# of connected clients: 1]
+%% Waiting for a client...
+
+*** request ***
+     GET /html/form.html HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     Upgrade-Insecure-Requests: 1
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+     Accept-Encoding: gzip, deflate, sdch
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** response ***
+     HTTP/1.1 200 Document Follows
+     Content-Length: 384
+
+     <file contents not shown>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60399,localport=5555]
+%% [# of connected clients: 0]
+%% New connection established: Socket[addr=/0:0:0:0:0:0:0:1,port=60400,localport=5555]
+%% [# of connected clients: 1]
+%% Waiting for a client...
+
+*** request ***
+     POST /html/form.html HTTP/1.1
+     Host: localhost:5555
+     Connection: keep-alive
+     Content-Length: 30
+     Cache-Control: max-age=0
+     Origin: http://localhost:5555
+     Upgrade-Insecure-Requests: 1
+     User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.116 Safari/537.36
+     Content-Type: application/x-www-form-urlencoded
+     Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+     Referer: http://localhost:5555/html/form.html
+     Accept-Encoding: gzip, deflate
+     Accept-Language: en-US,en;q=0.8,fr;q=0.6
+
+*** Response ***
+     HTTP/1.1 405 Method not allowed
+     Content-Type: text/html
+
+     <contents of html/405.html not shown>
+
+%% Connection released: Socket[addr=/0:0:0:0:0:0:0:1,port=60400,localport=5555]
+%% [# of connected clients: 0]

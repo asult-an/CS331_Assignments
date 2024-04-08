@@ -1,6 +1,6 @@
 /* Server program for the OnlineOrder app
-
-   @author YOUR FULL NAMES GO HERE
+   server only runs for 5 minutes
+   @author Mitchell Bricco, Yeakpan Kopah, Adeel Sultan
 
    @version CS 391 - Spring 2024 - A2
 */
@@ -22,7 +22,6 @@ public class OOServer
     {
       ServerSocket serverSocket = null;
         Socket socket = null;
-
         try {
             serverSocket = new ServerSocket(portNumber);
             System.out.println("Server started: " + serverSocket);
@@ -40,9 +39,7 @@ public class OOServer
             } catch (IOException e) {
                 System.out.println("I/O error: " + e);
             }
-            // new thread for a client
             new Thread(new OO(socket)).start();
-            
         }   
         try {
          serverSocket.close();
@@ -234,12 +231,9 @@ class OO implements Runnable
                         out.writeUTF(reply);
                         break;
                   }
-                  break;
-                  
-               
+                  break; 
             }
          }  
-
     }// placeOrder method
 
    /* open the necessary I/O streams and initialize the in and out

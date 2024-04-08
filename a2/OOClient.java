@@ -1,6 +1,6 @@
 /* Client program for the OnlineOrder app
 
-   @author <YOUR FULL NAMES GO HERE>
+   @author Mitchell Bricco, Yeakpan Kopah, Adeel Sultan
 
    @version CS 391 - Spring 2024 - A2
 */
