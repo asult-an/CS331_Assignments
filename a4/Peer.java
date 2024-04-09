@@ -92,21 +92,25 @@ class Peer
             case "S":
             case "s":
             case "1":
+                System.out.println();
                 return 1;
 
             case "F":
             case "f":
             case "2":
+                System.out.println();
                 return 2;
 
             case "G":
             case "g":
             case "3":
+                System.out.println();
                 return 3;
 
             case "Q":
             case "q":
             case "4":
+                System.out.println();
                 return 4;
         }
 
@@ -225,7 +229,7 @@ class Peer
             String tempName = fileList[i].toString().substring(filesPath.length() + 1,
             fileList[i].toString().length());
             if (tempName.equals(fileName)) {
-                System.out.println("This file already exists locally in " + filesPath);
+                System.out.println("This file exists locally in " + filesPath);
                 found = true;
             }
         } 
@@ -448,6 +452,9 @@ class Peer
                     incomingIP = request.split(" ")[1];
                     lookupPort = Integer.parseInt(request.split(" ")[2]);
                     neighbor = new Neighbor(incomingIP, lookupPort);
+                    if(neighbors.contains(neighbor)){
+                        break;
+                    }
                     neighbors.add(neighbor);
                     break;
 
