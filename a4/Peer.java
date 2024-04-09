@@ -8,15 +8,15 @@
  *
  *  @author Yeakpan Kopah
  * 
- *  @bug The initial join of a new peer [does/does not] work fully. [pick one]
+ *  @bug The initial join of a new peer [does] work fully. [pick one]
  *
- *  @bug The Status command [does/does not] work fully. [pick one]
+ *  @bug The Status command [does] work fully. [pick one]
  *
- *  @bug The Find command [does/does not] work fully. [pick one]
+ *  @bug The Find command [does] work fully. [pick one]
  *
- *  @bug The Get command [does/does not] work fully. [pick one]
+ *  @bug The Get command [does] work fully. [pick one]
  * 
- *  @bug The Quit command [does/does not] work fully. [pick one]
+ *  @bug The Quit command [does] work fully. [pick one]
  * 
  **/
 
@@ -78,7 +78,8 @@ class Peer
         System.out.println("\nYour options:");
         System.out.println("    1. [S]tatus");
         System.out.println("    2. [F]ind <filename>");
-        System.out.println("    3. [G]et <filename> <peer IP> <peer port>");
+        System.out.println(
+            "    3. [G]et <filename> <peer IP> <peer port>");
         System.out.println("    4. [Q]uit");
         System.out.print("Your choice: ");
     }// displayMenu method
@@ -165,12 +166,15 @@ class Peer
         DatagramPacket packet;
 
         try {
-            buf = ("leave " + ip + " " + Integer.toString(lPort)).getBytes();
+            buf = ("leave " + ip + " " + 
+            Integer.toString(lPort)).getBytes();
             for (Neighbor n : neighbors) {
                 address = InetAddress.getByName(n.ip);
-                packet = new DatagramPacket(buf, buf.length, address, n.port);
+                packet = new DatagramPacket(buf, buf.length, 
+                address, n.port);
                 lThread.socket.send(packet);
-                GUI.displayLU("Sent: " + new String(packet.getData(), 0, packet.getLength()));
+                GUI.displayLU("Sent: " + new String(packet.getData(), 
+                0, packet.getLength()));
             }
         }
         catch (IOException e) {
@@ -197,7 +201,8 @@ class Peer
         
         System.out.println(border + "\nLocal files: ");
         for (int i = 0; i < fileList.length; ++i) {
-            System.out.println(fileList[i].toString().substring(filesPath.length() + 1,
+            System.out.println(fileList[i].toString().substring(
+            filesPath.length() + 1,
             fileList[i].toString().length()));
         }
 
@@ -226,10 +231,12 @@ class Peer
         System.out.print(border + "\nName of file to find: ");
         String fileName = scanner.nextLine();
         for (int i = 0; i < fileList.length; ++i) {
-            String tempName = fileList[i].toString().substring(filesPath.length() + 1,
+            String tempName = fileList[i].toString().substring(
+                filesPath.length() + 1,
             fileList[i].toString().length());
             if (tempName.equals(fileName)) {
-                System.out.println("This file exists locally in " + filesPath);
+                System.out.println("This file exists locally in " + 
+                filesPath);
                 found = true;
             }
         } 
@@ -240,13 +247,15 @@ class Peer
             String reqID = name + "#" + seqNumber++;
             try {
                 buf = ("lookup " + fileName + " " + reqID + " " + ip + " " +
-                Integer.toString(lPort) + " " + ip + " " + Integer.toString(lPort)).getBytes();
+                Integer.toString(lPort) + " " + ip + " " + 
+                Integer.toString(lPort)).getBytes();
                 for (Neighbor n : neighbors) {
                     address = InetAddress.getByName(n.ip);
-                    packet = new DatagramPacket(buf, buf.length, address, n.port);
+                    packet = new DatagramPacket(
+                        buf, buf.length, address, n.port);
                     lThread.socket.send(packet);
-                    GUI.displayLU("Sent: " + new String(packet.getData(), 0,
-                        packet.getLength()));
+                    GUI.displayLU("Sent: " + new String(packet.getData(), 
+                    0,packet.getLength()));
                 }
             }
             catch (IOException e) {
@@ -295,12 +304,14 @@ class Peer
         catch (IOException e) {
             System.err.println(e.getMessage());
         }
-        System.out.println("Contents of the received file between dashed lines: ");
+        System.out.println(
+            "Contents of the received file between dashed lines: ");
         System.out.println(fileBorder);
         System.out.println(response);
         System.out.println(fileBorder);
         
-        fileContents = response.substring(response.indexOf("\n") + 2, response.length());
+        fileContents = response.substring(
+            response.indexOf("\n") + 2, response.length());
         writeFile(fileName, fileContents);
 
     }// processGetRequest method
@@ -335,7 +346,8 @@ class Peer
     void printNeighbors()
     {   
         for (int i = 0; i < neighbors.size(); ++i) {
-            System.out.println(neighbors.get(i).ip + ":" + neighbors.get(i).port);
+            System.out.println(neighbors.get(i).ip + ":" +
+             neighbors.get(i).port);
         }
 
     }// printNeighbors method
@@ -400,12 +412,16 @@ class Peer
             }
             if (!neighbors.isEmpty()) {
                 try {
-                    byte[] buf = ("join " + ip + " " + Integer.toString(lPort)).getBytes();
-                    InetAddress address = InetAddress.getByName(neighbors.get(0).ip);
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length, 
+                    byte[] buf = ("join " + ip + " " + 
+                    Integer.toString(lPort)).getBytes();
+                    InetAddress address = 
+                    InetAddress.getByName(neighbors.get(0).ip);
+                    DatagramPacket packet = 
+                    new DatagramPacket(buf, buf.length, 
                     address, neighbors.get(0).port);
                     socket.send(packet);
-                    GUI.displayLU("Sent: " + new String(packet.getData(), 0, packet.getLength()));
+                    GUI.displayLU("Sent: " + new String(packet.getData(), 
+                    0, packet.getLength()));
                 }
                 catch (IOException e) {
                     System.err.println(e.getMessage());
@@ -417,9 +433,11 @@ class Peer
                 
                 try {
                     byte[] buf = new byte[256];
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                    DatagramPacket packet = 
+                    new DatagramPacket(buf, buf.length);
                     socket.receive(packet);
-                    String message = new String(packet.getData(), 0, packet.getLength());
+                    String message = new String(packet.getData(), 
+                    0, packet.getLength());
                     GUI.displayLU("Received: " + message);
                     process(message);
                 }
@@ -450,7 +468,8 @@ class Peer
             switch (type) {
                 case "join":
                     incomingIP = request.split(" ")[1];
-                    lookupPort = Integer.parseInt(request.split(" ")[2]);
+                    lookupPort = Integer.parseInt(
+                        request.split(" ")[2]);
                     neighbor = new Neighbor(incomingIP, lookupPort);
                     if(neighbors.contains(neighbor)){
                         break;
@@ -470,13 +489,16 @@ class Peer
                     neighbors.add(owner);
 
                     try {
-                        byte[] buf = ("join " + ip + " " + Integer.toString(lPort)).getBytes();
-                        InetAddress address = 
-                            InetAddress.getByName(neighbors.get(neighbors.size() - 1).ip);
-                        DatagramPacket packet = new DatagramPacket(buf, buf.length, 
+                        byte[] buf = ("join " + ip + " " + 
+                        Integer.toString(lPort)).getBytes();
+                        InetAddress address = InetAddress.getByName(
+                        neighbors.get(neighbors.size() - 1).ip);
+                        DatagramPacket packet = new DatagramPacket(buf, 
+                        buf.length, 
                         address, neighbors.get(neighbors.size() - 1).port);
                         socket.send(packet);
-                        GUI.displayLU("Sent: " + new String(packet.getData(), 0, packet.getLength()));
+                        GUI.displayLU("Sent: " + new String(
+                            packet.getData(), 0, packet.getLength()));
                     }
                     catch (IOException e) {
                         System.err.println(e.getMessage());
@@ -536,8 +558,8 @@ class Peer
             boolean found = false;
 
             for (int i = 0; i < fileList.length; ++i) {
-                String tempName = fileList[i].toString().substring(filesPath.length() + 1,
-                fileList[i].toString().length());
+                String tempName = fileList[i].toString().substring(
+                    filesPath.length() + 1,fileList[i].toString().length());
 
                 if (tempName.equals(fileName)) { //file was found
                     found = true;
@@ -549,10 +571,11 @@ class Peer
                             Integer.toString(lPort) + " (tcp port: <" + 
                             Integer.toString(ftPort) + ">) ").getBytes();
                         address = InetAddress.getByName(initIP);
-                        packet = new DatagramPacket(buf, buf.length, address, initPort);
+                        packet = new DatagramPacket(
+                            buf, buf.length, address, initPort);
                         socket.send(packet);
-                        GUI.displayLU("Sent: " + new String(packet.getData(), 0,
-                            packet.getLength()));
+                        GUI.displayLU("Sent: " + new String(
+                        packet.getData(), 0,packet.getLength()));
 
                     }
                     catch (IOException e) {
@@ -570,18 +593,21 @@ class Peer
                 DatagramPacket packet;
                 String reqID = name + "#" + seqNumber++;
                 try {
-                    buf = ("lookup " + fileName + " " + reqID + " " + ip + " " + lPort + 
+                    buf = ("lookup " + fileName + " " + 
+                    reqID + " " + ip + " " + lPort + 
                     " " + initIP + " " + initPort).getBytes();
-                    for (Neighbor n : neighbors) { System.out.println(n.ip + " " + n.port);}
+                    for (Neighbor n : neighbors) { System.out.println(
+                        n.ip + " " + n.port);}
                     for (Neighbor n : neighbors) {
                         address = InetAddress.getByName(n.ip);
-                        packet = new DatagramPacket(buf, buf.length, address, n.port);
-                        if (senderIP.equals(n.ip) && senderPort == n.port) {
+                        packet = new DatagramPacket(
+                            buf, buf.length, address, n.port);
+                        if (senderIP.equals(n.ip) && senderPort == n.port){
                             continue;
                         }
                         socket.send(packet);
-                        GUI.displayLU("Sent: " + new String(packet.getData(), 0,
-                        packet.getLength()));
+                        GUI.displayLU("Sent: " + new String(
+                            packet.getData(), 0,packet.getLength()));
                     }
                     
                 }
@@ -642,12 +668,14 @@ class Peer
         void process(String request)
         {        
             String requestedFileName = request.split(" ")[1];
-            requestedFileName = requestedFileName.substring(1, requestedFileName.length() - 1);
+            requestedFileName = requestedFileName.substring(1, 
+            requestedFileName.length() - 1);
             File directory = new File(filesPath);
             File[] fileList = directory.listFiles();
 
             for (int i = 0; i < fileList.length; ++i) {
-                String tempName = fileList[i].toString().substring(filesPath.length() + 1,
+                String tempName = fileList[i].toString().substring(
+                    filesPath.length() + 1,
                 fileList[i].toString().length());
                 if (requestedFileName.equals(tempName)) {
                     String fileContents = "";
@@ -663,7 +691,8 @@ class Peer
                         System.err.println(e.getMessage());
                     }
                     try {
-                        out.writeUTF(requestedFileName + ":\n " + fileContents);
+                        out.writeUTF(requestedFileName + ":\n " + 
+                        fileContents);
                         GUI.displayFT("fileFound " + fileContents);
                     }
                     catch (IOException e) {
@@ -719,7 +748,8 @@ class Peer
                   clientSocket.close();
                 }
               } catch (IOException e) {
-                System.err.println("Error in closing streams: " + e.getMessage());
+                System.err.println("Error in closing streams: " + 
+                e.getMessage());
               }
 
         }// close method
