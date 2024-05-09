@@ -60,19 +60,32 @@ public class Client
         out = new ByteArrayOutputStream();
         if (getFileName()) {
             while (true) {
+                System.out.println("loop");
                 byte[] chunk = rdt.receiveData();
+                byte[] bytes = chunk; //TODO MAY change when reliable transfer is implemented
                 if(new String(chunk,0,chunk.length).contains("done")){
+                    System.out.println("done");
                     break;
                 }
-                byte[] bytes = chunk; //TODO MAY change when reliable transfer is implemented
+                 int lastIndex = bytes.length - 1;
+                 byte[] trimmedBytes = new byte[lastIndex + 1];
+                // while (lastIndex >= 0 && bytes[lastIndex] == 0) {
+                //     lastIndex--;
+                // }
+                
+                // System.arraycopy(bytes, 0, trimmedBytes, 0, lastIndex + 1);
+                
+                //bytes = trimmedBytes;
                 int newLength = bytes.length - 3;
-                byte[] trimmedBytes = new byte[newLength];
+                trimmedBytes = new byte[newLength];
                 System.arraycopy(bytes, 0, trimmedBytes, 0, newLength);
 
-                out.write(trimmedBytes);
-                //out.write(chunk);
+                //out.write(trimmedBytes);
+                System.out.println("size: "+chunk.length);
+                out.write(chunk);
 
             }
+            System.out.println("outsize: "+out.toByteArray().length);
             System.out.println("CLIENT received image file");
             displayImage(out.toByteArray());
             Thread.sleep(20000); 

@@ -7,11 +7,11 @@
  *          Sender (inner class)
  *          Receiver (inner class)
  *
- * FIRST STUDENT'S FULL Mitchell Bricco
+ * Adeel Sultan
  *
- * 2nd STUDENT'S FULL NAME GOES HERE
+ * Mitchell Bricco
  *
- * 3rd STUDENT'S FULL NAME GOES HERE (DELETE THIS LINE IF NOT NEEDED)
+ * Yeakpan Kopah
  
  *****************************************************************************/
 
@@ -76,7 +76,7 @@ public class RDT
      */
     public void sendData(byte[] data)
     {
-        //System.out.println("rdt senddata");
+        System.out.println("rdt senddata");
         // for (int i = 0; i < data.length; i++) {
         //     System.out.println("RDT sendData: "+data[i]);
         // }
@@ -93,7 +93,7 @@ public class RDT
      */
     public byte[] receiveData()
     {
-        //System.out.println("rdt.receiveData");
+        System.out.println("rdt.receiveData");
         while (!dataWasReceivedFromBelow) {
             Thread.yield();
         } 
@@ -101,7 +101,9 @@ public class RDT
         //     System.out.println("RDT dataRecieved"+i+": "+dataReceived[i]);
         // }
         dataWasReceivedFromBelow = false;
-        return dataReceived.clone();
+        byte[] t = dataReceived.clone();;
+        //dataReceived = null;
+        return t;
     }// receiveData
 
     /**
@@ -147,12 +149,18 @@ public class RDT
             System.out.println("RECIEVER started");
             try {
                 rcvSocket = new MyDatagramSocket(rcvPortNum);
-                while(true){                
+                while(true){  
+                    System.out.println("receiver loop");              
                     rcvPacket = new DatagramPacket(rcvData, rcvData.length);
                     rcvSocket.receive(rcvPacket);
                     System.out.println("RECIEVER got data from below");
-                    dataWasReceivedFromBelow = true;
                     dataReceived = rcvPacket.getData();
+                    int actualLength = rcvPacket.getLength(); // Get the actual data length
+                    System.out.println("actual length: "+actualLength);
+                    byte[] actualData = new byte[actualLength]; // Create array of exact size
+                    System.arraycopy(rcvData, 0, actualData, 0, actualLength);
+                    dataReceived = actualData;
+                    dataWasReceivedFromBelow = true;
                     //sendAck(expectedSeqNum == 0 ? 1 : 0);
                     expectedSeqNum = expectedSeqNum == 0 ? 1 : 0;
                     // if(dataOK()){
@@ -292,6 +300,7 @@ public class RDT
          */     
         private void sendPacket() throws Exception
         {
+            System.out.println("sendpacket");
             // byte[] sendData = new byte[dataToSend.length + 2];
             // sendData[0] = (byte) curSeqNum;
             // System.arraycopy(dataToSend, 0, sendData, 1, dataToSend.length);
@@ -299,10 +308,10 @@ public class RDT
             // for (int i = 0; i < sendData.length; i++) {
             //     System.out.println("datasend"+i+": "+sendData[i]);
             // }
-            dataWaitingToBeSent = false;
             //System.out.println("peerIpAddress: "+peerIpAddress+", peerRcvportNum: "+peerRcvPortNum);
             DatagramPacket packet = new DatagramPacket(dataToSend, dataToSend.length, peerIpAddress, peerRcvPortNum);
             senderSocket.send(packet);
+            dataWaitingToBeSent = false;
             System.out.println("SENDER sent packet");
         }// sendPacket
     }// Sender

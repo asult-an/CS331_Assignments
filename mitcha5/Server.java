@@ -94,7 +94,7 @@ public class Server
         if (imgCount == 0)
             return null;
         int index = new java.util.Random().nextInt(imgCount);
-        return imgFileList[1];
+        return imgFileList[3];
     }// getRandomImageFile
 
     // Do not modify this method
@@ -129,13 +129,17 @@ public class Server
     // input stream
     private void sendFile(FileInputStream in) throws Exception
     {   
+        System.out.println("sendfile");
+        int total = 0;
         byte[] buffer = new byte[8192]; 
         int bytesRead ;//= in.read(buffer);
         while ((bytesRead = in.read(buffer)) != -1) {
             //System.out.print("read: "+bytesRead);
             rdt.sendData(Arrays.copyOf(buffer, bytesRead));
-            //System.out.println("SERVER Sent a chunk of size " + bytesRead);
+            System.out.println("SERVER Sent a chunk of size " + bytesRead);
+            total += bytesRead;
         }
+        System.out.println(total);
         rdt.sendData("done".getBytes());
         in.close();
         System.out.println("SERVER done sending the file "+fileName);
