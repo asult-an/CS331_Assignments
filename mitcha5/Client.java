@@ -63,6 +63,10 @@ public class Client
                 System.out.println("loop");
                 byte[] chunk = rdt.receiveData();
                 byte[] bytes = chunk; //TODO MAY change when reliable transfer is implemented
+                // if(chunk.length == 4){
+                //     System.out.println("fake done");
+                //     break; 
+                // }
                 if(new String(chunk,0,chunk.length).contains("done")){
                     System.out.println("done");
                     break;
