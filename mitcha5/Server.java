@@ -53,21 +53,18 @@ public class Server
      */
     public void run() throws Exception
     {
-        System.out.println("Server started");
+        System.out.println("SERVER started");
         while (true) {
-            //System.out.println("SERVER Waiting for a file request...");
             getRequest();
             String filename = getRandomImageFile();
-            // if (filename == null) {
-            //     System.out.println("SERVER: No image files found.");
-            //     return;
-            // }
-            System.out.println("SERVER: Sending file name: " + filename);
+            System.out.println("SERVER sent file name \"" + filename+"\"");
             sendFileName(filename);
             try (FileInputStream f = new FileInputStream(new File(A5.IMG_SUBFOLDER, filename))) {
                 sendFile(f);
+                
             }
-            System.out.println("SERVER File sent, waiting for 2 seconds...");
+            System.out.println("SERVER sent file done message");
+            System.out.println("SERVER done");;
             Thread.sleep(2000); 
             break; 
         }
@@ -122,27 +119,26 @@ public class Server
     {
         fileName = inFileName;
         rdt.sendData(inFileName.getBytes());
-        System.out.println("SERVER: File name sent");
     }// sendFileName
 
     // sends to the client the chunk(s) of the file to be read from the given
     // input stream
     private void sendFile(FileInputStream in) throws Exception
     {   
-        System.out.println("sendfile");
-        int total = 0;
         byte[] buffer = new byte[8192]; 
-        int bytesRead ;//= in.read(buffer);
+        int bytesRead ;
+        int count = 0;
+        int oldBytesRead = -1;
         while ((bytesRead = in.read(buffer)) != -1) {
-            //System.out.print("read: "+bytesRead);
+            oldBytesRead = bytesRead;
             rdt.sendData(Arrays.copyOf(buffer, bytesRead));
-            System.out.println("SERVER Sent a chunk of size " + bytesRead);
-            total += bytesRead;
+            count++;
         }
-        System.out.println(total);
+        System.out.println("SERVER sent last file chunk #"+count+" [" + 
+        oldBytesRead+" bytes starting with 0x"+String.format("%02X]", buffer[0]));
+        System.out.println("SERVER done sending the file "+fileName);
         rdt.sendData("done".getBytes());
         in.close();
-        System.out.println("SERVER done sending the file "+fileName);
     }// sendFile
 
     // waits for the file request from the client.
@@ -151,11 +147,13 @@ public class Server
     // received
     private void getRequest()
     {
-        System.out.println("get request");
-        byte[] requestData = rdt.receiveData();
-        System.out.println("message: "+ new String(requestData,0,requestData.length));//TODO remove this line
+        byte[] requestData = rdt.receiveData();  
         System.out.println("SERVER looping in getRequest");
-        System.out.println("SERVER got request for image file");
+        if(new String(requestData,0,requestData.length)
+        .contains("this string is a request")){
+            System.out.println("SERVER got request for image file");
+        }
+        
     }// getRequest
 
 }// Server

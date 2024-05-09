@@ -36,10 +36,8 @@ public class Client
                   int rcvPortNum,
                   int peerRcvPortNum) throws Exception
     {
-        System.out.println("CLIENT started");
         this.rdt = new RDT(ipAddress, rcvPortNum, peerRcvPortNum, "CLIENT");
         Thread.sleep(100);
-        System.out.println("CLIENT started");
     }// constructor
 
     /**
@@ -61,21 +59,19 @@ public class Client
         sendFileRequest();
         out = new ByteArrayOutputStream();
         if (getFileName()) {
+            int count = 0;
             while (true) {
-                System.out.println("loop");
                 byte[] chunk = rdt.receiveData();
                 if(new String(chunk,0,chunk.length).contains("done")){
-                    System.out.println("done");
                     break;
                 }
-
-                //out.write(trimmedBytes);
-                System.out.println("size: "+chunk.length);
+                count++;
+                System.out.println("CLIENT got file chunk #"+count+" [" + 
+                chunk.length+" bytes starting with 0x"+String.format("%02X]", chunk[0]));
                 out.write(chunk);
 
             }
-            System.out.println("outsize: "+out.toByteArray().length);
-            System.out.println("CLIENT received image file");
+            System.out.println("CLIENT done");
             displayImage(out.toByteArray());
             Thread.sleep(2000); 
             if (frame != null) {
@@ -90,7 +86,6 @@ public class Client
     {
         try
         {
-            System.out.println("CLIENT started");
             new Client(args.length != 1 ? null : args[0],
                        A5.CLIENT_RCV_PORT_NUM,
                        A5.CLIENT_PEER_RCV_PORT_NUM).run();
@@ -133,12 +128,7 @@ public class Client
      */
     private void sendFileRequest()
     {
-        //System.out.println("Client sent file request");
         byte[] requestMessage = {(byte)A5.MSG_REQUEST_IMG_FILE};
-        // for (int i = 0; i < requestMessage.length; i++) {
-        //     System.out.println(requestMessage[i]);
-        // }
-        //rdt.sendData(requestMessage);
         rdt.sendData("this string is a request".getBytes());
         System.out.println("CLIENT Sent file request.");
     }// sendFileRequest
