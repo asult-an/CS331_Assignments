@@ -36,8 +36,10 @@ public class Client
                   int rcvPortNum,
                   int peerRcvPortNum) throws Exception
     {
+        System.out.println("CLIENT started");
         this.rdt = new RDT(ipAddress, rcvPortNum, peerRcvPortNum, "CLIENT");
-        Thread.sleep(1000);
+        Thread.sleep(100);
+        System.out.println("CLIENT started");
     }// constructor
 
     /**
@@ -62,27 +64,10 @@ public class Client
             while (true) {
                 System.out.println("loop");
                 byte[] chunk = rdt.receiveData();
-                byte[] bytes = chunk; //TODO MAY change when reliable transfer is implemented
-                // if(chunk.length == 4){
-                //     System.out.println("fake done");
-                //     break; 
-                // }
                 if(new String(chunk,0,chunk.length).contains("done")){
                     System.out.println("done");
                     break;
                 }
-                 int lastIndex = bytes.length - 1;
-                 byte[] trimmedBytes = new byte[lastIndex + 1];
-                // while (lastIndex >= 0 && bytes[lastIndex] == 0) {
-                //     lastIndex--;
-                // }
-                
-                // System.arraycopy(bytes, 0, trimmedBytes, 0, lastIndex + 1);
-                
-                //bytes = trimmedBytes;
-                int newLength = bytes.length - 3;
-                trimmedBytes = new byte[newLength];
-                System.arraycopy(bytes, 0, trimmedBytes, 0, newLength);
 
                 //out.write(trimmedBytes);
                 System.out.println("size: "+chunk.length);
@@ -92,7 +77,7 @@ public class Client
             System.out.println("outsize: "+out.toByteArray().length);
             System.out.println("CLIENT received image file");
             displayImage(out.toByteArray());
-            Thread.sleep(20000); 
+            Thread.sleep(2000); 
             if (frame != null) {
                 frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
             }
@@ -105,6 +90,7 @@ public class Client
     {
         try
         {
+            System.out.println("CLIENT started");
             new Client(args.length != 1 ? null : args[0],
                        A5.CLIENT_RCV_PORT_NUM,
                        A5.CLIENT_PEER_RCV_PORT_NUM).run();

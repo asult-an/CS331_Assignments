@@ -24,7 +24,7 @@ import java.util.Random;
  */
 public class MyDatagramSocket extends DatagramSocket
 {
-    private static final int DEFAULT_ONE_OUT_OF = 100000000;
+    private static final int DEFAULT_ONE_OUT_OF = 10;
     private              int dropOneOutOf       = DEFAULT_ONE_OUT_OF;
     private              int corruptOneOutOf    = DEFAULT_ONE_OUT_OF;
     private              Random rand;
@@ -54,7 +54,7 @@ public class MyDatagramSocket extends DatagramSocket
     @Override
     public void send(DatagramPacket packet) throws IOException
     {
-        if (dropOneOutOf > 0 && rand.nextInt(dropOneOutOf) == 0 && false)
+        if (dropOneOutOf > 0 && rand.nextInt(dropOneOutOf) == 0)
         {
             // drop the packet
             if (packet.getLength() > 0)
@@ -72,7 +72,7 @@ public class MyDatagramSocket extends DatagramSocket
         
         if (corruptOneOutOf > 0 && 
             packet.getLength() > 0 && 
-            rand.nextInt(corruptOneOutOf) == 0 && false)
+            rand.nextInt(corruptOneOutOf) == 0)
         {
             // pick a random bit within a random byte in the packet
             int len = packet.getLength();

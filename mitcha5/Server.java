@@ -151,7 +151,7 @@ public class Server
     // received
     private void getRequest()
     {
-        
+        System.out.println("get request");
         byte[] requestData = rdt.receiveData();
         System.out.println("message: "+ new String(requestData,0,requestData.length));//TODO remove this line
         System.out.println("SERVER looping in getRequest");

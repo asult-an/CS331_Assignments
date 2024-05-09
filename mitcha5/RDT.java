@@ -15,6 +15,7 @@
  
  *****************************************************************************/
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -83,8 +84,10 @@ public class RDT
         while (dataWaitingToBeSent) {
             Thread.yield();
         }
-        dataToSend = data.clone();
-        dataWaitingToBeSent = true;
+        
+            dataToSend = data;
+            dataWaitingToBeSent = true;
+        
     }// sendData
 
     /** The application calls this method to receive a message from its peer.
@@ -92,16 +95,18 @@ public class RDT
      *  in its receive buffer.
      */
     public byte[] receiveData()
-    {
+    { 
+        
         while (!dataWasReceivedFromBelow) {
             Thread.yield();
         } 
         // for (int i = 0; i < dataReceived.length; i++) {
         //     System.out.println("RDT dataRecieved"+i+": "+dataReceived[i]);
         // }
-        dataWasReceivedFromBelow = false;
+        
         byte[] t = dataReceived.clone();
-        System.out.println("rdt.receiveData size: "+t.length);
+        dataWasReceivedFromBelow = false;
+        //System.out.println("rdt.receiveData size: "+t.length);
         //dataReceived = null;
         return t;
     }// receiveData
@@ -112,11 +117,18 @@ public class RDT
      */
     private byte checkSum(byte[] array, int n)
     {
-        byte b = 0;
-        for (int i = 0; i < n; i++) {
-            b = (byte) (b ^ array[i]);
-        }
-        return b; // only here to satisfy the compiler
+        byte value = array[0];
+        for (int i = 1; i < n; ++i)
+        value = (byte) ((int)value ^ (int)array[i]);
+        //xor bits in all bytes but last
+        //return the result
+        
+        return value; // only here to satisfy the compiler
+        // byte b = 0;
+        // for (int i = 0; i < n; i++) {
+        //     b = (byte) (b ^ array[i]);
+        // }
+        // return b; // only here to satisfy the compiler
     }// checkSum
 
     /***********************************************************************
@@ -155,44 +167,33 @@ public class RDT
                     rcvSocket.receive(rcvPacket);
                     System.out.println("RECIEVER got data from below");
                     byte[] data = rcvPacket.getData();
-                    //testing
-                    //data = rcvData;
-                    String s = new String(data,0,6);
-                    System.out.println(s);
-                    for (int i = 0; i < s.length(); i++) {
-                        System.out.println("s"+i+": "+(byte)s.charAt(i));
-                    }
-                    System.out.println("s length: "+s.length());
-                    //end of testing
-
                     int newSize = data.length - 2;
                     dataReceived = new byte[newSize];
                     System.arraycopy(data, 0, dataReceived, 0, newSize);
-                    //testing
-                    s = new String(dataReceived,0,6);
-                    System.out.println("dr: "+s);
-                    //end of testing 
                     int actualLength = rcvPacket.getLength(); // Get the actual data length
-                    System.out.println("actual length: "+actualLength);
                     byte[] actualData = new byte[actualLength]; // Create array of exact size
                     System.arraycopy(rcvData, 0, actualData, 0, actualLength);
+                    byte[] bytes = actualData.clone();
+                    byte seq = actualData[actualData.length-2];
+                    byte check = actualData[actualData.length-1];
+                    System.out.println("seq: "+ seq+",checksum: "+check);
+                    int newLength = bytes.length - 2;
+                    byte[] trimmedBytes = new byte[newLength];
+                    System.arraycopy(bytes, 0, trimmedBytes, 0, newLength);
+                    actualData = trimmedBytes;
                     dataReceived = actualData;
-                    dataWasReceivedFromBelow = true;
-                    //sendAck(expectedSeqNum == 0 ? 1 : 0);
-                    expectedSeqNum = expectedSeqNum == 0 ? 1 : 0;
-                    // if(dataOK()){
-                    //     rcvData = rcvPacket.getData();
-                    //     dataReceived = rcvData;
-                    //     dataWasReceivedFromBelow = true;
-                    //     while ( dataWasReceivedFromBelow ){
-                    //         Thread.yield();
-                    //     }
-                    //     sendAck(expectedSeqNum);
-                    //     expectedSeqNum = expectedSeqNum == 0 ? 1 : 0;
-                    // }
-                    // else {
-                    //     sendAck(expectedSeqNum == 0 ? 1 : 0);
-                    // }  
+                    
+                    if(dataOK(seq)){
+                        dataWasReceivedFromBelow = true;
+                        while (dataWasReceivedFromBelow) {
+                            Thread.yield();
+                        } 
+                        expectedSeqNum = expectedSeqNum == 0 ? 1 : 0;
+                        sendAck(seq);
+                    }
+                    else{
+                        sendAck(expectedSeqNum == 0 ? 1 : 0);
+                    }
                 }
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -208,9 +209,10 @@ public class RDT
          * As always, the format of the messages sent to the console is given
          * in the handout.
          */
-        private boolean dataOK()
+        private boolean dataOK(int seq)
         {
-            return checkSum(rcvData, rcvPacket.getLength()) == 0 && rcvData[0] == expectedSeqNum;   
+            return checkSum(rcvData, rcvPacket.getLength()) == 0 && seq == expectedSeqNum;
+            //return checkSum(rcvData, rcvPacket.getLength()) == 0 && rcvData[0] == expectedSeqNum;   
         }// dataOK
 
         /**
@@ -218,16 +220,17 @@ public class RDT
          */
         private void sendAck(int number)
         {
-            byte[] ack = String.valueOf(number).getBytes();
-            sendData(ack);
-            System.out.println("RECIEVER got good data: send new ACK");
-            // try {
-            //     byte[] ack = String.valueOf(number).getBytes();//{ (byte) number, checkSum(new byte[]{(byte) number}, 1) };
-            //     DatagramPacket ackPacket = new DatagramPacket(ack, ack.length, peerIpAddress, peerRcvPortNum);
-            //     rcvSocket.send(ackPacket);
-            // } catch (Exception e) {
-            //     e.printStackTrace();
-            // }
+            byte[] data = {(byte)number};
+            byte[] d = {(byte)number,checkSum(data, data.length - 1)};
+            DatagramPacket ackPacket = new DatagramPacket(d, d.length, rcvPacket.getAddress(),rcvPacket.getPort());
+            try {
+                System.out.println("RECEIVER sent ACK: " + number);
+                //System.out.println("port: "+rcvSocket.getPort());
+                rcvSocket.send(ackPacket);
+            }
+            catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
         }// sendAck
     }// Receiver
 
@@ -264,34 +267,36 @@ public class RDT
             System.out.println("SENDER started");
             try {
                 senderSocket = new MyDatagramSocket();
+                boolean waitingForAck = false;
                 while (true) {
-                    if(!dataWaitingToBeSent) {
-                        Thread.yield(); 
+                    if(!dataWaitingToBeSent && !waitingForAck) {
+                        //Thread.yield(); 
                     } 
-                    else {
+                    else if(dataWaitingToBeSent && !waitingForAck){
                         System.out.println("SENDER got data from above");
                         sendPacket();
+                        waitingForAck = true;
                     }
-
-                    // System.out.println("SENDER got data from above");
-                    // sendPacket();
-                    // dataWaitingToBeSent = false;
-                    // senderSocket.setSoTimeout(5000); 
-                    // rcvPacket = new DatagramPacket(rcvData, rcvData.length);
-                    // senderSocket.receive(rcvPacket); 
-                    // System.out.println(new String(rcvPacket.getData(), 0, rcvPacket.getLength()));
-                    // // switch (rcvPacket.getData()) {
-                    // //     case value:
-                            
-                    // //         break;
-                    
-                    // //     default:
-                    // //         break;
-                    // // }
-                    // if (ackPacketOK()) {
-                    //     curSeqNum = curSeqNum == 0 ? 1 : 0;
-                    //     dataWaitingToBeSent = false;
-                    // }
+                    else{
+                        try {
+                            senderSocket.setSoTimeout(500);
+                            rcvPacket = new DatagramPacket(rcvData, rcvData.length);
+                            senderSocket.receive(rcvPacket);
+                        } catch (java.net.SocketTimeoutException e) {
+                            dataWaitingToBeSent = true;
+                            sendPacket();
+                        }
+                        if(ackPacketOK()){
+                            waitingForAck = false;
+                            curSeqNum = curSeqNum == 0 ? 1 : 0;
+                            dataWaitingToBeSent = false;
+                        }
+                        else {
+                            dataWaitingToBeSent = true;
+                            sendPacket();
+                        }
+                        
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -308,7 +313,16 @@ public class RDT
          */
         private boolean ackPacketOK()
         {
-            return checkSum(rcvData, rcvData.length) == 0 && rcvData[0] == curSeqNum;  
+            if(rcvData[0] != curSeqNum){
+                System.out.println("false");
+                return false;
+            }
+            if(checkSum(rcvData, rcvData.length)!= 0){
+                System.out.println("l:false");
+                return false;
+            }
+            return true;
+            // /return checkSum(rcvData, rcvData.length) == 0 && rcvData[0] == curSeqNum;  
         }// ackPacketOK
 
         /**
@@ -318,25 +332,13 @@ public class RDT
         private void sendPacket() throws Exception
         {
             System.out.println("sendpacket");
-            // byte[] sendData = new byte[dataToSend.length + 2];
-            // sendData[0] = (byte) curSeqNum;
-            // System.arraycopy(dataToSend, 0, sendData, 1, dataToSend.length);
-            // sendData[dataToSend.length+1] = checkSum(sendData, sendData.length);
-            // for (int i = 0; i < sendData.length; i++) {
-            //     System.out.println("datasend"+i+": "+sendData[i]);
-            // }
-            //System.out.println("peerIpAddress: "+peerIpAddress+", peerRcvportNum: "+peerRcvPortNum);
             int newSize = dataToSend.length + 2;
             byte[] result = new byte[newSize];
-            result[newSize-2] = (byte)33;//curSeqNum;
+            result[newSize-2] = (byte)curSeqNum;
             System.arraycopy(dataToSend, 0, result, 0, dataToSend.length);
-            result[newSize - 1] = (byte)37;//checkSum(result, newSize);
-            // for (int i = 0; i < result.length; i++) {
-            //     System.out.println("result"+i+" = "+result[i]);
-            // }
-            DatagramPacket packet = new DatagramPacket(result, dataToSend.length, peerIpAddress, peerRcvPortNum);
+            result[newSize - 1] = checkSum(result, result.length);
+            DatagramPacket packet = new DatagramPacket(result, result.length, peerIpAddress, peerRcvPortNum);
             senderSocket.send(packet);
-            dataWaitingToBeSent = false;
             System.out.println("SENDER sent packet");
         }// sendPacket
     }// Sender
