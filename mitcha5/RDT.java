@@ -155,27 +155,25 @@ public class RDT
                     rcvSocket.receive(rcvPacket);
                     System.out.println("RECIEVER got data from below");
                     byte[] data = rcvPacket.getData();
-                    //testing
-                    //data = rcvData;
-                    String s = new String(data,0,6);
-                    System.out.println(s);
-                    for (int i = 0; i < s.length(); i++) {
-                        System.out.println("s"+i+": "+(byte)s.charAt(i));
-                    }
-                    System.out.println("s length: "+s.length());
-                    //end of testing
-
                     int newSize = data.length - 2;
                     dataReceived = new byte[newSize];
                     System.arraycopy(data, 0, dataReceived, 0, newSize);
-                    //testing
-                    s = new String(dataReceived,0,6);
-                    System.out.println("dr: "+s);
-                    //end of testing 
                     int actualLength = rcvPacket.getLength(); // Get the actual data length
-                    System.out.println("actual length: "+actualLength);
                     byte[] actualData = new byte[actualLength]; // Create array of exact size
                     System.arraycopy(rcvData, 0, actualData, 0, actualLength);
+                    byte[] bytes = actualData.clone();
+                    //testing
+                    // for (int i = actualLength-5; i < actualData.length; i++) {
+                    //     System.out.println("actual"+i+": "+actualData[i]);
+                    // }
+                    //end of testing
+                    byte seq = actualData[actualData.length-2];
+                    byte check = actualData[actualData.length-1];
+                    System.out.println("seq: "+ seq+",checksum: "+check);
+                    int newLength = bytes.length - 3;
+                    byte[] trimmedBytes = new byte[newLength];
+                    System.arraycopy(bytes, 0, trimmedBytes, 0, newLength);
+                    actualData = bytes;
                     dataReceived = actualData;
                     dataWasReceivedFromBelow = true;
                     //sendAck(expectedSeqNum == 0 ? 1 : 0);
@@ -328,13 +326,13 @@ public class RDT
             //System.out.println("peerIpAddress: "+peerIpAddress+", peerRcvportNum: "+peerRcvPortNum);
             int newSize = dataToSend.length + 2;
             byte[] result = new byte[newSize];
-            result[newSize-2] = (byte)33;//curSeqNum;
+            result[newSize-2] = (byte)33;//curSeqNum;TODO CHANGE
             System.arraycopy(dataToSend, 0, result, 0, dataToSend.length);
-            result[newSize - 1] = (byte)37;//checkSum(result, newSize);
+            result[newSize - 1] = (byte)37;//checkSum(result, newSize);TODO CHANGE
             // for (int i = 0; i < result.length; i++) {
             //     System.out.println("result"+i+" = "+result[i]);
             // }
-            DatagramPacket packet = new DatagramPacket(result, dataToSend.length, peerIpAddress, peerRcvPortNum);
+            DatagramPacket packet = new DatagramPacket(result, result.length, peerIpAddress, peerRcvPortNum);
             senderSocket.send(packet);
             dataWaitingToBeSent = false;
             System.out.println("SENDER sent packet");

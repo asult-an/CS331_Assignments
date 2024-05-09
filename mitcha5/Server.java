@@ -94,7 +94,7 @@ public class Server
         if (imgCount == 0)
             return null;
         int index = new java.util.Random().nextInt(imgCount);
-        return imgFileList[3];
+        return imgFileList[0];
     }// getRandomImageFile
 
     // Do not modify this method

@@ -62,27 +62,10 @@ public class Client
             while (true) {
                 System.out.println("loop");
                 byte[] chunk = rdt.receiveData();
-                byte[] bytes = chunk; //TODO MAY change when reliable transfer is implemented
-                // if(chunk.length == 4){
-                //     System.out.println("fake done");
-                //     break; 
-                // }
                 if(new String(chunk,0,chunk.length).contains("done")){
                     System.out.println("done");
                     break;
                 }
-                 int lastIndex = bytes.length - 1;
-                 byte[] trimmedBytes = new byte[lastIndex + 1];
-                // while (lastIndex >= 0 && bytes[lastIndex] == 0) {
-                //     lastIndex--;
-                // }
-                
-                // System.arraycopy(bytes, 0, trimmedBytes, 0, lastIndex + 1);
-                
-                //bytes = trimmedBytes;
-                int newLength = bytes.length - 3;
-                trimmedBytes = new byte[newLength];
-                System.arraycopy(bytes, 0, trimmedBytes, 0, newLength);
 
                 //out.write(trimmedBytes);
                 System.out.println("size: "+chunk.length);
